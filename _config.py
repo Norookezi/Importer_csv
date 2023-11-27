@@ -1,4 +1,4 @@
-from typing import *
+from typing import List, Any
 
 class Field:
     __name__: str = None
