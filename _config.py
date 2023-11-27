@@ -6,6 +6,12 @@ class Field:
     __mandatory__: bool = False
     __unique__: bool = False
     
+    def __init__(self, name: str, field: str, mandatory: bool, unique: bool):
+        self.name(name)
+        self.field(field)
+        self.mandatory(mandatory)
+        self.unique(unique)
+    
     def __get_name__(self) -> str:return self.name
     def __get_field__(self) -> str:return self.field
     def __get_mandatory__(self) -> bool:return self.mandatory
@@ -27,7 +33,7 @@ class Config:
     __file__: str = None
     __pattern__: str = None
     __method__: str = None
-    __fields__: List[Field] = None
+    __fields__: List[Field] = []
     
     def __get_name__(self) -> str: return self.__name__
     def __get_file__(self) -> str: return self.__file__
@@ -39,7 +45,7 @@ class Config:
     def __set_file__(self, file: str) -> None: self.__file__ = file
     def __set_pattern__(self, pattern: str) -> None: self.__pattern__ = pattern
     def __set_method__(self, method: str) -> None: self.check_method(method)
-    def __set_fields__(self, fields: Any) -> None: self.__fields__ = fields
+    def __set_fields__(self, fields: Any) -> None: self.__fields__.append(Field(fields))
     
     def check_method(self, method) -> bool:
         accepted_methods = ["add_or_cancel","add_or_pass","add_or_duplicate","add_or_replace","update_or_pass","update_or_cancel","update_or_add"]
