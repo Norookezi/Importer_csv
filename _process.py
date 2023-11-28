@@ -45,8 +45,8 @@ class Process:
 
                 replace_allowed = True
                 if conf.name in self.__rules__.keys():
-                    replace_allowed = broker_conf.get('REPLACE_DUPLICATES_RULES', False)
-                    print('Rules {rule_name} already exists replace: {do_replace}'.format(rule_name=conf.name, do_replace=broker_conf.get('REPLACE_DUPLICATES_RULES', replace_allowed)))
+                    replace_allowed = self.__conf__.get('REPLACE_DUPLICATES_RULES', False)
+                    print('Rules {rule_name} already exists replace: {do_replace}'.format(rule_name=conf.name, do_replace=self.__conf__.get('REPLACE_DUPLICATES_RULES', replace_allowed)))
 
                 if replace_allowed and not basename(config_file).startswith('_'):
                     self.__rules__[conf.name] = conf     
