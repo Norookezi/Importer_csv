@@ -6,6 +6,10 @@
 # Hors mit le "_" et le ".yaml", le nommage des fichiers de conf est libre
 # Nom de la règle
 Import user:
+    database: local
+    # Database correspond au nom de la base de donnée sur la quel le code doit envoyer les lignes
+    table: User
+    # nom de la table ou les lignes doivent figurer
     pattern: user_contact_*.csv
     # Les fichier devront avoir un nom commençant par le pattern
     # Le pattern prend en compte "*" en tant que "n'importe quel chaîne de caractère"

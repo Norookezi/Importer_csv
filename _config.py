@@ -6,11 +6,11 @@ class Field:
     __mandatory__: bool = False
     __unique__: bool = False
     
-    def __init__(self, name: str, field: str, mandatory: bool, unique: bool):
-        self.name(name)
-        self.field(field)
-        self.mandatory(mandatory)
-        self.unique(unique)
+    def __init__(self, field):
+        self.__set_name__(field["csv"])
+        self.__set_field__(field["name"])
+        self.__set_mandatory__(getattr(field, "mandatory", False))
+        self.__set_unique__(getattr(field, "unique", False))
     
     def __get_name__(self) -> str:return self.name
     def __get_field__(self) -> str:return self.field
@@ -34,18 +34,24 @@ class Config:
     __pattern__: str = None
     __method__: str = None
     __fields__: List[Field] = []
+    __database__: str = None
+    __table__: str = None
     
     def __get_name__(self) -> str: return self.__name__
     def __get_file__(self) -> str: return self.__file__
     def __get_pattern__(self) -> str: return self.__pattern__
     def __get_method__(self) -> str: return self.__method__
     def __get_fields__(self) -> List[Field]: return self.__fields__
+    def __get_database__(self) -> str: return self.__database__
+    def __get_table__(self) -> str: return self.__table__
     
     def __set_name__(self, name: str) -> None: self.__name__ = name
     def __set_file__(self, file: str) -> None: self.__file__ = file
     def __set_pattern__(self, pattern: str) -> None: self.__pattern__ = pattern
     def __set_method__(self, method: str) -> None: self.check_method(method)
     def __set_fields__(self, fields: Any) -> None: self.__fields__.append(Field(fields))
+    def __set_database__(self, database: str) -> None: self.__database__ = database
+    def __set_table__(self, database: str) -> None: self.__table__ = database
     
     def check_method(self, method) -> bool:
         accepted_methods = ["add_or_cancel","add_or_pass","add_or_duplicate","add_or_replace","update_or_pass","update_or_cancel","update_or_add"]
@@ -61,3 +67,5 @@ class Config:
     pattern = property(__get_pattern__, __set_pattern__)
     method = property(__get_method__, __set_method__)
     fields = property(__get_fields__, __set_fields__)
+    database = property(__get_database__, __set_database__)
+    table = property(__get_table__, __set_table__)
