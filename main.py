@@ -24,20 +24,27 @@ class Main:
         
         config_files = glob(self.__rules_path__)
         
-        for config_file in config_files: self.get_rules(config_file)
-        
-        for name, rule in self.__rules__.items():
-            print("{}\n   {}".format(name, rule.__dict__))          
+        for config_file in config_files: self.get_rules(config_file)      
+
     def get_rules(self, config_file):
         if basename(config_file).startswith('_'): return
         
         config = read_yaml(open(config_file, 'r', encoding='utf-8'))
         for conf_name, conf_option in config.items():
             conf = Config()
+            conf.fields = []
             conf.name = conf_name
             conf.file = config_file
             conf.pattern = conf_option["pattern"]
             conf.method = conf_option["method"]
+            
+            for name, field in conf_option["fields"].items():
+                conf.add_fields({**field, "csv": name})
+                
+            conf.database = getattr(conf_option, "database", "")
+            
+            conf.table = conf_option["table"]
+            
             
             replace_allowed = True
             if conf.name in self.__rules__.keys():
@@ -45,7 +52,8 @@ class Main:
                 print('Rules {rule_name} already exists replace: {do_replace}'.format(rule_name=conf.name, do_replace=broker_conf.get('REPLACE_DUPLICATES_RULES', replace_allowed)))
 
             if replace_allowed and not basename(config_file).startswith('_'):
-                self.__rules__[conf.name] = conf        
+                self.__rules__[conf.name] = conf     
+                   
     def file_modified(self, path: str):
         
         #Ignored file

@@ -49,7 +49,7 @@ class Config:
     def __set_file__(self, file: str) -> None: self.__file__ = file
     def __set_pattern__(self, pattern: str) -> None: self.__pattern__ = pattern
     def __set_method__(self, method: str) -> None: self.check_method(method)
-    def __set_fields__(self, fields: Any) -> None: self.__fields__.append(Field(fields))
+    def __set_fields__(self, fields: Any) -> None: self.__fields__ = fields
     def __set_database__(self, database: str) -> None: self.__database__ = database
     def __set_table__(self, database: str) -> None: self.__table__ = database
     
@@ -60,6 +60,9 @@ class Config:
             raise ValueError("Invalid method {method}".format(method=str(method)))
         
         self.__method__ = method
+        
+    def add_fields(self, fields):
+        self.__fields__.append(Field(fields))
        
      
     name = property(__get_name__, __set_name__)
