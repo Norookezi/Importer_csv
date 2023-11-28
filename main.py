@@ -9,9 +9,10 @@ from _process import Process
 broker_conf = read_yaml(open("./.env.yaml", "r", encoding="utf-8"))
         
 main = Process(broker_conf)
+watcher = Watcher(main = main)
 
 observer = Observer()
-observer.schedule(Watcher(), broker_conf["FILES_PATH"], recursive=True)
+observer.schedule(watcher, broker_conf["FILES_PATH"], recursive=True)
 observer.start()
 
 try:
