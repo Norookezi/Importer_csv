@@ -1,0 +1,40 @@
+# Les lignes commençant par "#" sont des commentaires
+# Ils sont présent dans ce fichier juste pour comprendre la forme de ce fichier
+# Les fichiers de conf doivent être au format yaml
+# Pour les désactiver, il faut ajouter un "_" au debut du nom du fichier
+# Pour modifier, pas besoin de redémarrer le broker, simplement de modifier le fichier yaml
+# Hors mit le "_" et le ".yaml", le nommage des fichiers de conf est libre
+# Nom de la règle
+Import user:
+    pattern: user_contact_*.csv
+    # Les fichier devront avoir un nom commençant par le pattern
+    # Le pattern prend en compte "*" en tant que "n'importe quel chaîne de caractère"
+    # donc "test*.csv" fonctionnera avec ces fichiers:
+    # - test.csv
+    # - test_import.csv
+    # - test-101123-user.csv
+    # - test######.csv
+    # ect...
+    method: add_or_pass
+    # Valeurs possible pour method:
+    # add_or_cancel       #Ajouter, si la ligne existe déjà, annuler
+    # add_or_pass         #Ajouter, si la ligne existe déjà, continuer
+    # add_or_duplicate    #Ajouter, si la ligne existe déjà, ajouter la ligne en double
+    # add_or_replace      #Ajouter, si la ligne existe déjà remplacer
+    # update_or_pass      #Mettre a jour, si manquant, continuer
+    # update_or_cancel    #Mettre a jour, si manquant, annuler
+    # update_or_add       #Mettre a jour, si manquant, ajouter la ligne
+    fields:
+        - Adresse: 
+            name: user_address
+            mandatory: true
+            unique: true
+        # Ici, le programme récupérera le champ "Adresse" dans le fichier CSV
+        # puis l’enverra dans le champ user_address dans la base de donnée
+        # en cas d'absence d'un attribut, il sera automatiquement considéré comme "false"
+        - Pseudo: 
+            name: user_name
+            mandatory: true
+            unique: true
+        # Le programme sortira une erreur si les noms au dessus ne figurent pas dans le fichier
+        # Il sortira également une erreur si le champ dans la base de donnée n'existe pas
