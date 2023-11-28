@@ -20,7 +20,7 @@ class Main:
     __rules_path__: str = None
     
     def __init__(self, conf):
-        self.__rules_path__ = conf.get('RULES_PATH', None)
+        self.__rules_path__ = "{}/*/*.yaml".format(conf.get('FILES_PATH', None))
         
         config_files = glob(self.__rules_path__)
         
