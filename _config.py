@@ -57,7 +57,7 @@ class Config:
         accepted_methods = ["add_or_cancel","add_or_pass","add_or_duplicate","add_or_replace","update_or_pass","update_or_cancel","update_or_add"]
         
         if not method in accepted_methods:
-            raise ValueError("Invalid method {method}".format(method=str(method)))
+            raise ValueError("Invalid method '{method}'".format(method=str(method)))
         
         self.__method__ = method
         

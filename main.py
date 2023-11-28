@@ -31,28 +31,31 @@ class Main:
         
         config = read_yaml(open(config_file, 'r', encoding='utf-8'))
         for conf_name, conf_option in config.items():
-            conf = Config()
-            conf.fields = []
-            conf.name = conf_name
-            conf.file = config_file
-            conf.pattern = conf_option["pattern"]
-            conf.method = conf_option["method"]
-            
-            for name, field in conf_option["fields"].items():
-                conf.add_fields({**field, "csv": name})
-                
-            conf.database = getattr(conf_option, "database", "")
-            
-            conf.table = conf_option["table"]
-            
-            
-            replace_allowed = True
-            if conf.name in self.__rules__.keys():
-                replace_allowed = broker_conf.get('REPLACE_DUPLICATES_RULES', False)
-                print('Rules {rule_name} already exists replace: {do_replace}'.format(rule_name=conf.name, do_replace=broker_conf.get('REPLACE_DUPLICATES_RULES', replace_allowed)))
+            try:
+                conf = Config()
+                conf.fields = []
+                conf.name = conf_name
+                conf.file = config_file
+                conf.pattern = conf_option["pattern"]
+                conf.method = conf_option["method"]
 
-            if replace_allowed and not basename(config_file).startswith('_'):
-                self.__rules__[conf.name] = conf     
+                for name, field in conf_option["fields"].items():
+                    conf.add_fields({**field, "csv": name})
+
+                conf.database = getattr(conf_option, "database", "")
+
+                conf.table = conf_option["table"]
+
+
+                replace_allowed = True
+                if conf.name in self.__rules__.keys():
+                    replace_allowed = broker_conf.get('REPLACE_DUPLICATES_RULES', False)
+                    print('Rules {rule_name} already exists replace: {do_replace}'.format(rule_name=conf.name, do_replace=broker_conf.get('REPLACE_DUPLICATES_RULES', replace_allowed)))
+
+                if replace_allowed and not basename(config_file).startswith('_'):
+                    self.__rules__[conf.name] = conf     
+            except (KeyError, ValueError) as e:
+                print("⚠️ - ERROR OCCURRED ({error}) | Can't process {file}".format(error=e, file=os_realpath(config_file)))
                    
     def file_modified(self, path: str):
         
