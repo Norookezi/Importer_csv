@@ -29,6 +29,8 @@ class Main:
         for name, rule in self.__rules__.items():
             print("{}\n   {}".format(name, rule.__dict__))          
     def get_rules(self, config_file):
+        if basename(config_file).startswith('_'): return
+        
         config = read_yaml(open(config_file, 'r', encoding='utf-8'))
         for conf_name, conf_option in config.items():
             conf = Config()
@@ -44,7 +46,6 @@ class Main:
 
             if replace_allowed and not basename(config_file).startswith('_'):
                 self.__rules__[conf.name] = conf        
-        print(self.__rules__)
     def file_modified(self, path: str):
         
         #Ignored file
