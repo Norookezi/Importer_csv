@@ -1,2 +1,4 @@
 *.yaml
 !_*.yaml
+
+__pycache__
