@@ -64,7 +64,7 @@ class Config:
         if not method in accepted_methods:
             raise ValueError("Invalid method '{method}'".format(method=str(method)))
 
-        self._method__ = method
+        self.__method__ = method
 
     def add_fields(self, fields):
         self.fields.append(Field(fields))
