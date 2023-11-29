@@ -1,5 +1,5 @@
 # Imports
-from watchdog.observers import Observer
+from watchdog.observers.polling import PollingObserver as Observer
 from yaml import safe_load as read_yaml
 
 # Local import
