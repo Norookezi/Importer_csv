@@ -1,4 +1,6 @@
 from typing import List, Any
+from os.path import dirname, join as os_join
+from fnmatch import fnmatch
 
 class Field:
     __name__: str = None
@@ -64,6 +66,10 @@ class Config:
     def add_fields(self, fields):
         self.__fields__.append(Field(fields))
        
+    def path_match(self, path: str) -> bool:
+        pattern = os_join(dirname(self.__file__), self.__pattern__)
+        
+        return fnmatch(path, pattern)
      
     name = property(__get_name__, __set_name__)
     file = property(__get_file__, __set_file__)
