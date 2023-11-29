@@ -13,19 +13,19 @@ class Process:
     __rules__: {str, List[Config]} = {}
     __rules_path__: str = None
     __conf__: Any = None
-    
+
     def __init__(self, conf):
         self.__conf__ = conf
-        
+
         self.__rules_path__ = "{}/*/*.yaml".format(self.__conf__.get('FILES_PATH', None))
-        
+
         config_files = glob(self.__rules_path__)
-        
+
         for config_file in config_files: self.get_rules(config_file)      
 
     def get_rules(self, config_file):
         if basename(config_file).startswith('_'): return
-        
+
         config = read_yaml(open(config_file, 'r', encoding='utf-8'))
         for conf_name, conf_option in config.items():
             try:
@@ -42,7 +42,7 @@ class Process:
                 conf.database = getattr(conf_option, "database", "")
 
                 conf.table = conf_option["table"]
-                
+
                 conf.separator = getattr(conf_option, "separator", ";")
 
 
@@ -55,9 +55,9 @@ class Process:
                     self.__rules__[conf.name] = conf     
             except (KeyError, ValueError) as e:
                 print("⚠️ - ERROR OCCURRED ({error}) | Can't process {file}".format(error=e, file=os_realpath(config_file)))
-                   
+
     def file_modified(self, path: str):
-        
+
         #Ignored file
         if basename(path).startswith('_'):
             self.remove_ignored_rules(os_join(dirname(path), basename(path)[1:]))
@@ -65,8 +65,8 @@ class Process:
         else: 
             self.get_rules(path)
             self.remove_deleted_key(path)
-        
-        
+
+
     def remove_deleted_key(self, path: str):
         path_file_content = read_yaml(open(os_realpath(path), "r", encoding="utf-8")).keys() if path else []
         self.delete_rule(lambda name, conf: (os_realpath(conf.file) == os_realpath(path) and name not in path_file_content))        
@@ -81,33 +81,33 @@ class Process:
     def _to_delete(self, delete_keys: List[str] = None):
         for name in delete_keys:
             del self.__rules__[name]
-       
+
     def handle_event(self, event: Event):
         event_path = getattr(event, "dest_path", event.src_path)
         if basename(event_path).endswith('.yaml'):
             if event.event_type == "deleted":
                 self.delete_orphan_rules(event.src_path)
-                
+
             elif event.event_type == "modified":
                 self.file_modified(event.src_path)
-        
+
         elif basename(event_path).endswith('.csv'):
             if "_error" in dirname(event_path) or\
                 "_done" in dirname(event_path) or\
                 event.event_type == "deleted":
                 return self.done(event)
-            
+
             rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)][0]
-            
-            file: Csv_parse = Csv_parse(event_path, rule.__separator__)
-            
+
+            file: Csv_parse = Csv_parse(event_path, rule.__separator__, rule.fields)
+
             request = Request
             request.insert(request, rule = rule, file = file)
-            
+
         else:
             print("File not processed, {} isn't a valid format".format(basename(event_path).split('.')[-1]))
         self.done(event)
-        
-    
+
+
     def done(self, event) -> None:
         print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Done: ", basename(event.src_path))

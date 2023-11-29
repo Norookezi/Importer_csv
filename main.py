@@ -7,7 +7,7 @@ from _watcher import Watcher
 from _process import Process
 
 broker_conf = read_yaml(open("./.env.yaml", "r", encoding="utf-8"))
-        
+
 main = Process(broker_conf)
 watcher = Watcher(main = main)
 
