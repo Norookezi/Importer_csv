@@ -6,7 +6,7 @@ from datetime import datetime
 class Watcher(Event):
     __main__ = None
     
-    def __init__(self, main = None): __main__ = main
+    def __init__(self, main = None): self.__main__ = main
     
     def handle_event(self, event: Event) -> None:
         if event.is_directory:
