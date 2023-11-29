@@ -1,5 +1,6 @@
 from _config import Config
-
+from _csv_parse import Csv_parse
+from _requests import Request
 # Imports
 from typing import List, Any
 from glob import glob
@@ -41,6 +42,8 @@ class Process:
                 conf.database = getattr(conf_option, "database", "")
 
                 conf.table = conf_option["table"]
+                
+                conf.separator = getattr(conf_option, "separator", ";")
 
 
                 replace_allowed = True
@@ -87,5 +90,24 @@ class Process:
                 
             elif event.event_type == "modified":
                 self.file_modified(event.src_path)
+        
+        elif basename(event_path).endswith('.csv'):
+            if "_error" in dirname(event_path) or\
+                "_done" in dirname(event_path) or\
+                event.event_type == "deleted":
+                return self.done(event)
             
+            rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)][0]
+            
+            file: Csv_parse = Csv_parse(event_path, rule.__separator__)
+            
+            request = Request
+            request.insert(request, rule = rule, file = file)
+            
+        else:
+            print("File not processed, {} isn't a valid format".format(basename(event_path).split('.')[-1]))
+        self.done(event)
+        
+    
+    def done(self, event) -> None:
         print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Done: ", basename(event.src_path))
