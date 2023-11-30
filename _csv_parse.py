@@ -35,12 +35,14 @@ class Csv_parse:
         self.__lines__ = []
 
         for line in lines:
+            if len(line) == 0:
+                return
             line_ = Line()
 
             self.__lines__.append(line_.parse(self.__header__, line.split(self.__separator__)))
 
         mandatory_fields = [field for field in self.__fields__ if field.__mandatory__ and not field.__name__ in self.__header__]
-        
+
         if len(mandatory_fields) != 0:
             raise ValueError("Missing fields: %s" % "; ".join([missing_fields.name for missing_fields in mandatory_fields]))
 
