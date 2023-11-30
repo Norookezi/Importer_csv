@@ -39,11 +39,10 @@ class Process:
                 for name, field in conf_option["fields"].items():
                     conf.add_fields({**field, "csv": name})
 
-                conf.database = getattr(conf_option, "database", "")
-
+                conf.database = conf_option["database"] if "database" in conf_option.keys() else ""
                 conf.table = conf_option["table"]
 
-                conf.separator = getattr(conf_option, "separator", ";")
+                conf.separator = conf_option["separator"] if "separator" in conf_option.keys() else ";"
 
 
                 replace_allowed = True
@@ -97,12 +96,17 @@ class Process:
                 event.event_type == "deleted":
                 return self.done(event)
 
-            rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)][0]
+            rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)]
 
-            file: Csv_parse = Csv_parse(event_path, rule.__separator__, rule.fields)
+            if len(rule) == 0:
+                print("File not processed, no rule for this name")
+                self.done(event)
+                return
 
-            request = Request
-            request.insert(request, rule = rule, file = file)
+            file: Csv_parse = Csv_parse(event_path, rule[0].__separator__, rule[0].fields)
+
+            request = Request()
+            request.insert(rule = rule[0], file = file)
 
         else:
             print("File not processed, {} isn't a valid format".format(basename(event_path).split('.')[-1]))
