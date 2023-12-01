@@ -51,7 +51,7 @@ class Request:
 
     def generate_insert(self, rule, line):
         request = """
-            INSERT INTO {table}
+            INSERT INTO {table} ({fields})
             SELECT {couple_field_value}
             WHERE NOT EXISTS (
                 SELECT 1
