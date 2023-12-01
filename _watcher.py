@@ -12,7 +12,6 @@ class Watcher(Event):
         if event.is_directory:
             return
 
-        print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
         Thread(target=self.__main__.handle_event, args=(event,)).start()
 
     on_modified = on_created = on_deleted = handle_event

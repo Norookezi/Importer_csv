@@ -84,17 +84,20 @@ class Process:
     def handle_event(self, event: Event):
         event_path = getattr(event, "dest_path", event.src_path)
         if basename(event_path).endswith('.yaml'):
+            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
             if event.event_type == "deleted":
                 self.delete_orphan_rules(event.src_path)
 
             elif event.event_type == "modified":
                 self.file_modified(event.src_path)
-
+            self.done(event)
         elif basename(event_path).endswith('.csv'):
             if "_error" in dirname(event_path) or\
                 "_done" in dirname(event_path) or\
                 event.event_type == "deleted":
-                return self.done(event)
+                return
+
+            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
 
             rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)]
 
@@ -107,10 +110,10 @@ class Process:
 
             request = Request()
             request.insert(rule = rule[0], file = file)
+            self.done(event)
 
         else:
             print("File not processed, {} isn't a valid format".format(basename(event_path).split('.')[-1]))
-        self.done(event)
 
 
     def done(self, event) -> None:
