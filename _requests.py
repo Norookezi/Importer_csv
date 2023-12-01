@@ -80,6 +80,9 @@ class Request:
             raise ValueError(session.error)
         
     def done(self, file):
+        if not path_exist(os_join(dirname(file.__file__), "_done")):
+            mkdir(os_join(dirname(file.__file__), "_done"))
+                
         if not path_exist(os_join(dirname(file.__file__), "_done", basename(file.__file__))):
             os_rename(file.__file__, os_join(dirname(file.__file__), "_done", basename(file.__file__)))
         else:
