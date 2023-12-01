@@ -49,7 +49,7 @@ class Request:
 
         self.done(file)
 
-    def generate_insert(rule, line):
+    def generate_insert(self, rule, line):
         request = """
             INSERT INTO {table}
             SELECT {couple_field_value}
@@ -67,7 +67,7 @@ class Request:
             
         return request
     
-    def check_error(session, file):
+    def check_error(self, session, file):
         if session.error is not None:
             session.rollback()
             if not path_exist(os_join(dirname(file.__file__), "_error")):
@@ -79,7 +79,7 @@ class Request:
                 os_rename(file.__file__, os_join(dirname(file.__file__), "_error", basename(file.__file__) + str(time())))
             raise ValueError(session.error)
         
-    def done(file):
+    def done(self, file):
         if not path_exist(os_join(dirname(file.__file__), "_done", basename(file.__file__))):
             os_rename(file.__file__, os_join(dirname(file.__file__), "_done", basename(file.__file__)))
         else:
