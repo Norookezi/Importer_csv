@@ -9,13 +9,20 @@ class Line:
             setattr(self, headers[index], value)
         return (self)
 
-class Csv_parse:
+class Mis_parse:
     __separator__ = None
     __file__ = None
     __rule__: Config = None
     __header__: List[str] = []
     __lines__: List[Line] = []
     __fields__: List[Field] = []
+    __correspondance__: {str: str} = {
+        "0001": "Niveau",
+        "0002": "Temperature",
+        "0004": "Conductivité",
+        "0005": "Salinité",
+        "0006": "TDS"
+    }
 
     def __init__(self, path: str = None, separator: str = ";", rule: List[Field] = None):
         self.__separator__ = separator
@@ -37,11 +44,6 @@ class Csv_parse:
         for line in lines:
             if len(line) == 0:
                 return
-
-            line = line.strip()
-            line = line.replaceAll("\"", "")
-            line = line.replaceAll("\'", "")
-
             line_ = Line()
 
             self.__lines__.append(line_.parse(self.__header__, line.split(self.__separator__)))
@@ -52,4 +54,4 @@ class Csv_parse:
             raise ValueError("Missing fields: %s" % "; ".join([missing_fields.name for missing_fields in mandatory_fields]))
 
 if __name__ == '__main__':
-    print(Csv_parse('./test.csv').__dict__)
+    print(Mis_parse('./test.MIS').__dict__)
