@@ -33,6 +33,7 @@ Import user:
             name: user_address
             mandatory: true
             unique: true
+            type: varchar
         # Ici, le programme récupérera le champ "Adresse" dans le fichier CSV
         # puis l’enverra dans le champ user_address dans la base de donnée
         # en cas d'absence d'un attribut, il sera automatiquement considéré comme "false"
@@ -40,5 +41,11 @@ Import user:
             name: user_name
             mandatory: true
             unique: true
+            default: Jonh Doe
+            type: varchar
+        # le type ne peut être que un de ces éléments: ["varchar", "float4", (a venir...)]
+        # mettre un type différent remontera une erreur
+        # en cas de doute, contacter le service Data
+        #
         # Le programme sortira une erreur si les noms au dessus ne figurent pas dans le fichier
         # Il sortira également une erreur si le champ dans la base de donnée n'existe pas

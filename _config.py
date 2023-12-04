@@ -11,26 +11,26 @@ class Field:
     __type__: str = None
 
     def __init__(self, field):
-        self.name(field["csv"])
-        self.field(field["name"])
-        self.mandatory(field.get("mandatory") or False)
-        self.unique(field.get("unique") or False)
-        self.default(field.get("default"), '')
-        self.type(field.get("type"), '')
+        self.__set_name__(field["csv"])
+        self.__set_field__(field["name"])
+        self.__set_mandatory__(field.get("mandatory") or False)
+        self.__set_unique__(field.get("unique") or False)
+        self.__set_default__(field.get("default"))
+        self.__set_type__(field.get("type"))
 
     def __get_name__(self) -> str:return self.__name__
     def __get_field__(self) -> str:return self.__field__
     def __get_mandatory__(self) -> bool:return self.__mandatory__
     def __get_unique__(self) -> bool:return self.__unique__
-    def __get_default__(self) -> bool:return self.__default__
-    def __get_type__(self) -> bool:return self.__type__
+    def __get_default__(self) -> str:return self.__default__
+    def __get_type__(self) -> str:return self.__type__
 
     def __set_name__(self, name: str) -> None: self.__name__ = name
     def __set_field__(self, field: str) -> None: self.__field__ = field
     def __set_mandatory__(self, mandatory: bool = False) -> None: self.__mandatory__ = mandatory
     def __set_unique__(self, unique: bool = False) -> None: self.__unique__ = unique
-    def __set_default__(self, default: bool = False) -> None: self.__default__ = default
-    def __set_type__(self, type: bool = False) -> None: self.__type__ = type
+    def __set_default__(self, default: str) -> None: self.__default__ = default
+    def __set_type__(self, type: str) -> None: self.__type__ = type
 
     name = property(__get_name__, __set_name__)
     field = property(__get_field__, __set_field__)
