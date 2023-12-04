@@ -42,8 +42,8 @@ class Csv_parse:
                 return
 
             line = line.strip()
-            line = line.replaceAll("\"", "")
-            line = line.replaceAll("\'", "")
+            line = line.replace("\"", "")
+            line = line.replace("\'", "")
 
             line_ = Line()
 
