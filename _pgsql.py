@@ -23,7 +23,6 @@ class PG_session:
     def __get_connection__(self): return self.__connection__
     def __get_cursor__(self):
         if self.__cursor__ == None:
-            print("Creating cursor")
             self.cursor = self.connection.cursor()
 
         return self.__cursor__

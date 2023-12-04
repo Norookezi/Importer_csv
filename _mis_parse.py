@@ -52,6 +52,3 @@ class Mis_parse:
 
         if len(mandatory_fields) != 0:
             raise ValueError("Missing fields: %s" % "; ".join([missing_fields.name for missing_fields in mandatory_fields]))
-
-if __name__ == '__main__':
-    print(Mis_parse('./test.MIS').__dict__)

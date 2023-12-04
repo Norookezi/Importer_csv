@@ -55,6 +55,3 @@ class Csv_parse:
 
         if len(mandatory_fields) != 0:
             raise ValueError("Missing fields: %s" % "; ".join([missing_fields.name for missing_fields in mandatory_fields]))
-
-if __name__ == '__main__':
-    print(Csv_parse('./test.csv').__dict__)

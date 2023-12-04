@@ -4,7 +4,9 @@ from _requests import Request
 # Imports
 from typing import List, Any
 from glob import glob
-from os.path import realpath as os_realpath, basename, dirname, join as os_join, exists as file_exist
+from time import time
+from os.path import realpath as os_realpath, basename, dirname, join as os_join, exists as path_exist
+from os import rename as os_rename, mkdir
 from watchdog.events import FileSystemEventHandler as Event
 from yaml import safe_load as read_yaml
 from datetime import datetime
@@ -53,14 +55,13 @@ class Process:
                 if replace_allowed and not basename(config_file).startswith('_'):
                     self.__rules__[conf.name] = conf     
             except (KeyError, ValueError) as e:
-                print("⚠️ - ERROR OCCURRED ({error}) | Can't process {file}".format(error=e, file=os_realpath(config_file)))
+                raise RuntimeError("⚠️ - ERROR OCCURRED ({error}) | Can't process {file}".format(error=e, file=os_realpath(config_file)))
 
     def file_modified(self, path: str):
 
         #Ignored file
         if basename(path).startswith('_'):
             self.remove_ignored_rules(os_join(dirname(path), basename(path)[1:]))
-            print(self.__rules__)
         else: 
             self.get_rules(path)
             self.remove_deleted_key(path)
@@ -72,7 +73,7 @@ class Process:
     def remove_ignored_rules(self, ignore_file_path):
         self.delete_rule(lambda name, conf: os_realpath(conf.file) == os_realpath(ignore_file_path))
     def delete_orphan_rules(self, path: str = None, config: List[str] = None):
-        self.delete_rule(lambda name, conf: not file_exist(os_realpath(conf.file)))
+        self.delete_rule(lambda name, conf: not path_exist(os_realpath(conf.file)))
 
     def delete_rule(self, condition) -> List[str]:
         to_delete: List[str] = [conf_name for conf_name, conf in self.__rules__.items() if condition(conf_name, conf)]
@@ -80,40 +81,50 @@ class Process:
     def _to_delete(self, delete_keys: List[str] = None):
         for name in delete_keys:
             del self.__rules__[name]
-
     def handle_event(self, event: Event):
-        event_path = getattr(event, "dest_path", event.src_path)
-        if basename(event_path).endswith('.yaml'):
-            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
-            if event.event_type == "deleted":
-                self.delete_orphan_rules(event.src_path)
+        try:
+            event_path = getattr(event, "dest_path", event.src_path)
+            if basename(event_path).endswith('.yaml'):
+                print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
+                if event.event_type == "deleted":
+                    self.delete_orphan_rules(event.src_path)
 
-            elif event.event_type == "modified":
-                self.file_modified(event.src_path)
-            self.done(event)
-        elif basename(event_path).endswith('.csv'):
-            if "_error" in dirname(event_path) or\
-                "_done" in dirname(event_path) or\
-                event.event_type == "deleted":
-                return
-
-            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
-
-            rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)]
-
-            if len(rule) == 0:
-                print("File not processed, no rule for this name")
+                elif event.event_type == "modified":
+                    self.file_modified(event.src_path)
                 self.done(event)
-                return
+            elif basename(event_path).endswith('.csv'):
+                if "_error" in dirname(event_path) or\
+                    "_done" in dirname(event_path) or\
+                    event.event_type == "deleted":
+                    return
 
-            file: Csv_parse = Csv_parse(event_path, rule[0].__separator__, rule[0].__encoding__, rule[0].fields)
+                print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
 
-            request = Request()
-            request.insert(rule = rule[0], file = file)
-            self.done(event)
+                rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)]
 
-        else:
-            print("File not processed, {} isn't a valid format".format(basename(event_path).split('.')[-1]))
+                if len(rule) == 0:
+                    self.done(event)
+                    return
+
+                file: Csv_parse = Csv_parse(event_path, rule[0].__separator__, rule[0].__encoding__, rule[0].fields)
+
+                request = Request()
+                request.insert(rule = rule[0], file = file)
+                self.done(event)
+
+            #else:
+            #    print("File not processed, {} isn't a valid format".format(basename(event_path).split('.')[-1]))
+        except Exception as e:
+            if not path_exist(os_join(dirname(file.__file__), "_error")):
+                mkdir(os_join(dirname(file.__file__), "_error"))
+
+            if not path_exist(os_join(dirname(file.__file__), "_error", basename(file.__file__))):
+                os_rename(file.__file__, os_join(dirname(file.__file__), "_error", basename(file.__file__)))
+            else:
+                os_rename(file.__file__, os_join(dirname(file.__file__), "_error", basename(file.__file__) + str(time())))
+            with open(os_join(dirname(file.__file__), "_error", ".".join(basename(file.__file__).split(".")[:-1]) + ".log"), "w") as log:
+                log.write(str(e))
+                log.close()
 
 
     def done(self, event) -> None:
