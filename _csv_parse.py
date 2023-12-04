@@ -6,7 +6,7 @@ class Line:
 
     def parse(self, headers, values):
         for index, value in enumerate(values):
-            setattr(self, headers[index], value)
+            setattr(self, headers[index], value.strip())
         return (self)
 
 class Csv_parse:
