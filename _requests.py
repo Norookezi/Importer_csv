@@ -61,7 +61,7 @@ class Request:
             """.format(
                     table=rule.table,
                     fields=", ".join([field.field for field in rule.fields]),
-                    couple_field_value = ", ".join(["\'{value}\'::text as {field}".format(value=getattr(line, fields.name), field=fields.field) for fields in rule.fields]),
+                    couple_field_value = ", ".join(["\'{value}\' as {field}".format(value=getattr(line, fields.name), field=fields.field) for fields in rule.fields]),
                     condition = " or ".join(["{field} = \'{value}\'".format(value=getattr(line, fields.name), field=fields.field) for fields in rule.fields if fields.unique])
                     )
             
