@@ -50,7 +50,7 @@ class Request:
 
             self.done(file)
         except Exception as e:
-            session.error(str(e))
+            session.error = e
             self.check_error(session, file)
 
     def generate_insert(self, rule, line):
