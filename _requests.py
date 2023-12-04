@@ -25,7 +25,7 @@ class Request:
             session.exec(request)
 
             if session.count() == 0:
-                session.error = "Line {} in {} is duplicated and process method is add_or_cancel, rolling back".format(index, file.__file__)
+                session.error = "Line {} in {} is duplicated and process method is add_or_cancel, rolling back".format(index+2, file.__file__)
             
             self.check_error(session, file)
 
@@ -87,7 +87,7 @@ class Request:
                 os_rename(file.__file__, os_join(dirname(file.__file__), "_error", basename(file.__file__)))
             else:
                 os_rename(file.__file__, os_join(dirname(file.__file__), "_error", basename(file.__file__) + str(time())))
-            with open(dirname(file.__file__), "_error", basename(file.__file__) + ".log", "w", encoding="utf-8") as log:
+            with open(os_join(dirname(file.__file__), "_error", ".".join(basename(file.__file__).split(".")[:-1]) + ".log"), "w") as log:
                 log.write(session.error)
                 log.close()
                 
