@@ -19,6 +19,9 @@ Import user:
     # - test-101123-user.csv
     # - test######.csv
     # ect...
+    encoding: utf-8-sig
+    # Type d'encodage du fichier, par default celui ci sera utf-8-sig
+    # Mais cela peut varier selon le fichier, 
     method: add_or_pass
     # Valeurs possible pour method:
     # add_or_cancel       #Ajouter, si la ligne existe déjà, annuler

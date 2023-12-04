@@ -106,7 +106,7 @@ class Process:
                 self.done(event)
                 return
 
-            file: Csv_parse = Csv_parse(event_path, rule[0].__separator__, rule[0].fields)
+            file: Csv_parse = Csv_parse(event_path, rule[0].__separator__, rule[0].__encoding__, rule[0].fields)
 
             request = Request()
             request.insert(rule = rule[0], file = file)

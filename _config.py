@@ -49,6 +49,7 @@ class Config:
     __database__: str = None
     __table__: str = None
     __separator__: str = None
+    __encoding__: str = None
 
     def __get_name__(self) -> str: return self.__name__
     def __get_file__(self) -> str: return self.__file__
@@ -58,6 +59,7 @@ class Config:
     def __get_database__(self) -> str: return self.__database__
     def __get_table__(self) -> str: return self.__table__
     def __get_separator__(self) -> str: return self.__separator__
+    def __get_encoding__(self) -> str: return self.__encoding__
 
     def __set_name__(self, name: str) -> None: self.__name__ = name
     def __set_file__(self, file: str) -> None: self.__file__ = file
@@ -67,6 +69,7 @@ class Config:
     def __set_database__(self, database: str) -> None: self.__database__ = database
     def __set_table__(self, table: str) -> None: self.__table__ = table
     def __set_separator__(self, separator: str) -> None: self.__separator__ = separator
+    def __set_encoding__(self, encoding: str) -> None: self.__encoding__ = encoding
 
     def check_method(self, method) -> bool:
         accepted_methods = ["add_or_cancel","add_or_pass","add_or_duplicate","add_or_replace","update_or_pass","update_or_cancel","update_or_add"]
@@ -92,3 +95,4 @@ class Config:
     database = property(__get_database__, __set_database__)
     table = property(__get_table__, __set_table__)
     separator = property(__get_separator__, __set_separator__)
+    encoding = property(__get_encoding__, __set_encoding__)

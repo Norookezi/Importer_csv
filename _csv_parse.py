@@ -16,16 +16,18 @@ class Csv_parse:
     __header__: List[str] = []
     __lines__: List[Line] = []
     __fields__: List[Field] = []
+    __encoding__: str = None
 
-    def __init__(self, path: str = None, separator: str = ";", rule: List[Field] = None):
+    def __init__(self, path: str = None, separator: str = ";", encoding: str = "utf-8-sig", rule: List[Field] = None):
         self.__separator__ = separator
         self.__file__ = path
         self.__fields__ = rule
+        self.__encoding__ = encoding
 
         self.get_content()
 
     def get_content(self):
-        file = open(self.__file__, 'r', encoding='utf-8-sig')
+        file = open(self.__file__, 'r', encoding=self.__encoding__)
         content = file.read().split('\n')
         headers = content[0].split(self.__separator__)
         for index, header in enumerate(headers):
