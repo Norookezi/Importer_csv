@@ -14,4 +14,4 @@ class Watcher(Event):
 
         Thread(target=self.__main__.handle_event, args=(event,)).start()
 
-    on_modified = on_created = on_deleted = handle_event
+    on_modified = on_created = on_deleted = on_moved = handle_event
