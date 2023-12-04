@@ -27,7 +27,10 @@ class Csv_parse:
     def get_content(self):
         file = open(self.__file__, 'r', encoding='utf-8')
         content = file.read().split('\n')
-        self.__header__ = content[0].split(self.__separator__)
+        headers = content[0].split(self.__separator__)
+        for index, header in enumerate(headers):
+            headers[index] = header.strip()
+        self.__header__ = headers
 
         self.set_lines(content[1:])
 
