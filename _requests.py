@@ -38,16 +38,20 @@ class Request:
         database = broker_conf['DATABASES'][rule.database]
         session = PG_session(rule.database, database["host"], database["user"], database["pass"], database["port"])
 
-        for line in file.__lines__:
-            request = self.generate_insert(rule, line)
+        try:
+            for line in file.__lines__:
+                request = self.generate_insert(rule, line)
 
-            session.exec(request)
+                session.exec(request)
 
+                self.check_error(session, file)
+
+                self.request_poll.append(request)
+
+            self.done(file)
+        except Exception as e:
+            session.error(str(e))
             self.check_error(session, file)
-
-            self.request_poll.append(request)
-
-        self.done(file)
 
     def generate_insert(self, rule, line):
         request = """
