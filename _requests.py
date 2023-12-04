@@ -87,6 +87,10 @@ class Request:
                 os_rename(file.__file__, os_join(dirname(file.__file__), "_error", basename(file.__file__)))
             else:
                 os_rename(file.__file__, os_join(dirname(file.__file__), "_error", basename(file.__file__) + str(time())))
+            with open(dirname(file.__file__), "_error", basename(file.__file__) + ".log", "w", encoding="utf-8") as log:
+                log.write(session.error)
+                log.close()
+                
             raise ValueError(session.error)
         
     def done(self, file):
