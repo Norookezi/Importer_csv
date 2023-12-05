@@ -67,12 +67,12 @@ class Request:
                     fields=", ".join([field.field for field in rule.fields]),
                     couple_field_value = ", ".join([
                         "\'{value}\'{type} as {field}".format(
-                            value=getattr(line, fields.name, getattr(fields, 'default', '')),
+                            value = getattr(line, fields.name, fields.default).strip() if getattr(line, fields.name, '').strip() else getattr(fields, 'default', ''),
                             field=fields.field,
                             type="::{}".format(fields.type) if fields.type else ""
                         ) for fields in rule.fields
                     ]),
-                    condition = " or ".join(["{field} = \'{value}\'".format(value=getattr(line, fields.name), field=fields.field) for fields in rule.fields if fields.unique])
+                    condition = " or ".join(["{field} = \'{value}\'".format(value=getattr(line, fields.name), field=fields.field) for fields in rule.fields if fields.unique]) or "1=0"
                     )
             
         return request
