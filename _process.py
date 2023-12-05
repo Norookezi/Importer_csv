@@ -45,6 +45,7 @@ class Process:
                 conf.table = conf_option["table"]
 
                 conf.separator = conf_option["separator"] if "separator" in conf_option.keys() else ";"
+                conf.encoding = conf_option["encoding"] if "encoding" in conf_option.keys() else "utf-8-sig"
 
 
                 replace_allowed = True
