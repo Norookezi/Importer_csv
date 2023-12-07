@@ -99,8 +99,6 @@ class Process:
                     event.event_type == "deleted":
                     return
 
-                print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Proc: ", basename(event.src_path))
-
                 rule = [rule for rule in self.__rules__.values() if rule.path_match(event_path)]
 
                 if len(rule) == 0:
@@ -126,8 +124,8 @@ class Process:
             with open(os_join(dirname(file.__file__), "_error", ".".join(basename(file.__file__).split(".")[:-1]) + ".log"), "w") as log:
                 log.write(str(e))
                 log.close()
-            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Err : ", basename(event.src_path))
+            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Err : ", file)
 
 
     def done(self, event) -> None:
-        print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Done: ", basename(event.src_path))
+        return

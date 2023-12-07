@@ -67,7 +67,7 @@ class Request:
                     fields=", ".join([field.field for field in rule.fields]),
                     couple_field_value = ", ".join([
                         "\'{value}\'{type} as {field}".format(
-                            value = getattr(line, fields.name, fields.default).strip() if getattr(line, fields.name, '').strip() else getattr(fields, 'default', ''),
+                            value = (getattr(line, fields.name, fields.default).strip() if getattr(line, fields.name, '').strip() else getattr(fields, 'default', '')) or 0,
                             field=fields.field,
                             type="::{}".format(fields.type) if fields.type else ""
                         ) for fields in rule.fields
@@ -90,7 +90,7 @@ class Request:
             with open(os_join(dirname(file.__file__), "_error", ".".join(basename(file.__file__).split(".")[:-1]) + ".log"), "w") as log:
                 log.write(session.error)
                 log.close()
-                
+            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Err : ", file)
             raise ValueError(session.error)
         
     def done(self, file):
