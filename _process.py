@@ -126,6 +126,7 @@ class Process:
             with open(os_join(dirname(file.__file__), "_error", ".".join(basename(file.__file__).split(".")[:-1]) + ".log"), "w") as log:
                 log.write(str(e))
                 log.close()
+            print(datetime.now().strftime("%d/%m %H:%M:%S |"), "Err : ", basename(event.src_path))
 
 
     def done(self, event) -> None:
